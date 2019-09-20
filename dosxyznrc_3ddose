@@ -1,0 +1,74 @@
+clc
+clear
+[Filename,Pathname]=uigetfile('.3ddose','test');
+fid=fopen([Pathname,Filename],'r');
+[b,count]=fscanf(fid,'%f');
+
+function PDD = pdddata (h, z)
+
+dose=reshape(h,1,z); %%reshape?1?300?if z=300??
+PDD=100*dose/max(dose);
+
+endfunction
+
+
+b=b';
+x=b(1);
+y=b(2);
+z=b(3);
+d=b(x+y+z+7:x*y*z+x+y+z+6);
+fclose(fid);
+
+
+C=reshape(d,x,y,z);
+%prompt='??PDD????'
+%prompt='??phantom x ? y? ?indices'
+%xind=input('x axis ');
+%yind=input('y axix');
+
+%????,?????
+xmid=ceil(x/2);
+ymid=ceil(y/2);
+
+
+h=C(xmid,ymid,:);%%?????????
+
+%%
+PDD=pdddata(h,z);
+
+
+
+%hua z1 zuobiaozhou
+ for z=x+y+3+2+1:x+y+z+3+3-1
+   
+ z1(z-x-y-2-3)=median([b(z),b(z+1)],2);
+ 
+end 
+
+plot(z1,PDD);
+
+%%?profile
+ %x1=[-12.56:1.57:0,0.1,1.67:1.57:1.57*11]
+ 
+ %??????x????median?[],x?,??x???????
+ 
+ i=4;
+ for m=i:x+3 %%cong di si ge shu zi kai shi
+             %%x+4-1
+ x1(m-3)=median([b(m),b(m+1)],2);
+end 
+ 
+prompt='????x?scan'
+prompt='??y?_z???indices'
+
+yprf=input('y_indices');
+zprf=input('z_indices');
+res_h=C(:,yprf,zprf);
+numpro=100*res_h/max(res_h);
+numpro=numpro';
+ 
+function num=guiyi(res_h,x)
+profile=reshape(res_h,1);
+  numpro=100*profile/max(profile);
+endfunction
+plot(x1,numpro);%???????
